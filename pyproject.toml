@@ -1,0 +1,38 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "evidenceflow-ai"
+version = "0.1.0"
+description = "Approval-gated, observable AI evidence triage workflow"
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "Apache-2.0" }
+authors = [{ name = "JS van Dijk" }]
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=8.3", "ruff>=0.11"]
+telemetry = [
+  "opentelemetry-api>=1.31",
+  "opentelemetry-sdk>=1.31",
+  "opentelemetry-exporter-otlp-proto-http>=1.31",
+]
+
+[project.scripts]
+evidenceflow = "evidenceflow.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/evidenceflow"]
+
+[tool.pytest.ini_options]
+addopts = "-q"
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM"]

@@ -1,0 +1,10 @@
+{
+  "case_id": "example-001",
+  "title": "Synthetic service-account alert",
+  "sources": [
+    {
+      "source_id": "alert-2026-001",
+      "text": "Unauthorized access was detected for a synthetic service account. No production data is included."
+    }
+  ]
+}

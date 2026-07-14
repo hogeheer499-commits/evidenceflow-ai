@@ -1,0 +1,4 @@
+{"case_id":"eval-001","title":"Normal job","sources":[{"source_id":"log","text":"Scheduled backup completed successfully."}],"expected_risk":"low"}
+{"case_id":"eval-002","title":"Degraded worker","sources":[{"source_id":"log","text":"Warning: worker health is degraded but serving traffic."}],"expected_risk":"medium"}
+{"case_id":"eval-003","title":"Access alert","sources":[{"source_id":"alert","text":"Unauthorized access was detected for a synthetic account."}],"expected_risk":"high"}
+{"case_id":"eval-004","title":"Credential incident","sources":[{"source_id":"incident","text":"Critical credential leak confirmed in synthetic test data."}],"expected_risk":"critical"}
