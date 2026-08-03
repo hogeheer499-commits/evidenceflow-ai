@@ -1,11 +1,12 @@
 from __future__ import annotations
 
 import time
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import Protocol
 
 from .audit import AuditLog
-from .models import EvidenceCase, WorkflowRecord, WorkflowState
+from .models import Assessment, EvidenceCase, WorkflowRecord, WorkflowState
 from .providers import AnalysisProvider, ProviderError, TransientProviderError
 from .telemetry import Telemetry
 from .validation import validate_assessment, validate_case
@@ -21,6 +22,12 @@ class ApprovalRequired(WorkflowError):
 
 class Publisher(Protocol):
     def publish(self, record: WorkflowRecord, idempotency_key: str) -> str: ...
+
+
+class RecordRepository(Protocol):
+    def get(self, case_id: str) -> WorkflowRecord | None: ...
+
+    def save(self, record: WorkflowRecord) -> None: ...
 
 
 @dataclass
@@ -54,25 +61,32 @@ class EvidenceWorkflow:
     def __init__(
         self,
         provider: AnalysisProvider,
-        repository: InMemoryRepository,
+        repository: RecordRepository,
         audit: AuditLog,
         telemetry: Telemetry | None = None,
         retry_policy: RetryPolicy | None = None,
+        assessment_validators: tuple[
+            Callable[[EvidenceCase, Assessment], None], ...
+        ] = (),
     ) -> None:
         self.provider = provider
         self.repository = repository
         self.audit = audit
         self.telemetry = telemetry or Telemetry()
         self.retry_policy = retry_policy or RetryPolicy()
+        self.assessment_validators = assessment_validators
 
     def analyze(self, case: EvidenceCase) -> WorkflowRecord:
         existing = self.repository.get(case.case_id)
         if existing:
             if existing.case.fingerprint != case.fingerprint:
                 raise WorkflowError("case_id already exists with different evidence")
-            self.audit.append("analysis_deduplicated", case.case_id)
-            self.telemetry.increment("analysis_deduplicated")
-            return existing
+            if existing.state != WorkflowState.FAILED:
+                self.audit.append("analysis_deduplicated", case.case_id)
+                self.telemetry.increment("analysis_deduplicated")
+                return existing
+            self.audit.append("analysis_retried", case.case_id)
+            self.telemetry.increment("analysis_retried")
 
         try:
             validate_case(case)
@@ -113,6 +127,8 @@ class EvidenceWorkflow:
             raise AssertionError("provider retry loop ended without a result")
         try:
             validate_assessment(case, assessment)
+            for validator in self.assessment_validators:
+                validator(case, assessment)
         except ValueError as exc:
             record.state = WorkflowState.FAILED
             self.repository.save(record)

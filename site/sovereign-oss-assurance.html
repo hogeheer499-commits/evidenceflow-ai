@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Sovereign OSS Assurance — Kleine Koe</title>
+  <meta name="description" content="Local, evidence-first security assurance for government and regulated open-source software teams.">
+  <meta name="robots" content="noindex">
+  <style>
+    :root {
+      --bg: #fff;
+      --soft: #f5f5f7;
+      --dark: #000;
+      --ink: #1d1d1f;
+      --muted: #6e6e73;
+      --inverse: #f5f5f7;
+      --blue: #0a7cff;
+      --green: #03805c;
+      --orange: #b64400;
+      --line: #d2d2d7;
+      --font: -apple-system, BlinkMacSystemFont, "SF Pro Display",
+        "Helvetica Neue", "Segoe UI", sans-serif;
+      --container: 1040px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; color: var(--ink); background: var(--bg); font-family: var(--font); line-height: 1.5; }
+    a { color: inherit; }
+    .skip { position: absolute; left: -9999px; }
+    .skip:focus { left: 12px; top: 12px; background: var(--blue); color: #fff; padding: 10px 14px; z-index: 9; }
+    .wrap { max-width: var(--container); margin: auto; padding-inline: 24px; }
+    header { position: sticky; top: 0; background: rgba(255,255,255,.82); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(0,0,0,.08); z-index: 5; }
+    nav { height: 52px; display: flex; align-items: center; gap: 24px; }
+    .wordmark { font-weight: 700; letter-spacing: -.03em; margin-right: auto; text-decoration: none; }
+    nav a:not(.wordmark) { font-size: 13px; text-decoration: none; color: var(--muted); }
+    .nav-cta { background: var(--blue); color: #fff !important; padding: 7px 13px; border-radius: 999px; }
+    section { padding-block: clamp(72px, 11vw, 140px); }
+    .hero { text-align: center; padding-top: clamp(90px, 14vw, 170px); }
+    .kicker { color: var(--orange); font-weight: 650; font-size: 14px; letter-spacing: -.01em; }
+    h1, h2, h3 { letter-spacing: -.035em; line-height: 1.04; margin-top: 0; text-wrap: balance; }
+    h1 { font-size: clamp(48px, 9vw, 88px); max-width: 950px; margin-inline: auto; }
+    h2 { font-size: clamp(38px, 6vw, 60px); }
+    h3 { font-size: 25px; }
+    .sub { color: var(--muted); font-size: clamp(19px, 3vw, 26px); max-width: 780px; margin: 25px auto; }
+    .actions { display: flex; justify-content: center; gap: 18px; flex-wrap: wrap; margin-top: 34px; }
+    .btn { display: inline-flex; background: var(--blue); color: #fff; text-decoration: none; padding: 13px 22px; border-radius: 999px; }
+    .link { color: #006ee6; text-decoration: none; padding: 13px; }
+    .proof { display: flex; justify-content: center; gap: 22px; flex-wrap: wrap; margin-top: 42px; color: var(--muted); font-size: 14px; }
+    .proof span::before { content: "✓"; color: var(--green); margin-right: 7px; }
+    .soft { background: var(--soft); }
+    .dark { background: var(--dark); color: var(--inverse); }
+    .dark .sub, .dark p { color: #a1a1a6; }
+    .intro { text-align: center; max-width: 800px; margin: auto; }
+    .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 18px; margin-top: 54px; }
+    .card { grid-column: span 6; background: #fff; border-radius: 24px; padding: clamp(24px, 4vw, 38px); }
+    .card.dark-card { background: #161617; color: #fff; }
+    .card p { color: var(--muted); }
+    .dark-card p { color: #a1a1a6; }
+    .wide { grid-column: span 12; }
+    .number { display: inline-grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: var(--soft); color: var(--blue); font-weight: 700; margin-bottom: 28px; }
+    .flow { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-top: 45px; }
+    .step { border: 1px solid #424245; border-radius: 18px; padding: 22px; min-height: 170px; }
+    .step b { display: block; color: #2997ff; font-size: 13px; margin-bottom: 18px; }
+    .step p { margin: 0; font-size: 15px; }
+    .metrics { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-top: 40px; }
+    .metric { padding: 22px; border-radius: 18px; background: #fff; }
+    .metric strong { display: block; font-size: 34px; letter-spacing: -.04em; }
+    .metric small { color: var(--muted); }
+    .offer { border-top: 1px solid var(--line); padding: 28px 0; display: grid; grid-template-columns: 1.1fr 2fr 1fr; gap: 24px; align-items: start; }
+    .price { text-align: right; font-size: 20px; font-weight: 650; }
+    .faq details { border-top: 1px solid var(--line); padding: 24px 0; }
+    .faq summary { cursor: pointer; font-size: 20px; font-weight: 650; }
+    .faq p { max-width: 760px; color: var(--muted); }
+    .final { text-align: center; }
+    footer { border-top: 1px solid var(--line); padding: 34px 0 50px; color: var(--muted); font-size: 13px; }
+    @media (max-width: 780px) {
+      nav a:not(.wordmark):not(.nav-cta) { display: none; }
+      .card, .wide { grid-column: span 12; }
+      .flow { grid-template-columns: 1fr; }
+      .step { min-height: 0; }
+      .metrics { grid-template-columns: 1fr 1fr; }
+      .offer { grid-template-columns: 1fr; }
+      .price { text-align: left; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header>
+    <nav class="wrap" aria-label="Product navigation">
+      <a class="wordmark" href="https://kleinekoe.nl/">Kleine Koe</a>
+      <a href="#workflow">How it works</a>
+      <a href="#pilot">Pilot</a>
+      <a href="#faq">Questions</a>
+      <a class="nav-cta" href="https://kleinekoe.nl/contact">Discuss a pilot</a>
+    </nav>
+  </header>
+  <main id="main">
+    <section class="hero">
+      <div class="wrap">
+        <p class="kicker">Private AI · Software assurance · Human approval</p>
+        <h1>Security evidence stays evidence.</h1>
+        <p class="sub">Kleine Koe EvidenceFlow turns fragmented scanner output into locally processed, reviewable remediation decisions—without giving an AI permission to act on its own.</p>
+        <div class="actions">
+          <a class="btn" href="https://kleinekoe.nl/contact">Plan an assurance discovery</a>
+          <a class="link" href="#workflow">See the workflow ›</a>
+        </div>
+        <div class="proof" aria-label="Key controls">
+          <span>Customer-controlled infrastructure</span>
+          <span>Grounded citations</span>
+          <span>Named human approval</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="soft">
+      <div class="wrap">
+        <div class="intro">
+          <p class="kicker">The operational gap</p>
+          <h2>Your scanners find signals. Someone still has to turn them into decisions.</h2>
+          <p class="sub">EvidenceFlow does not replace SAST, dependency or secret scanners. It creates a controlled path after they run.</p>
+        </div>
+        <div class="grid">
+          <article class="card"><span class="number">1</span><h3>Preserve the facts</h3><p>Raw SARIF and repository observations remain separate from model-generated summaries.</p></article>
+          <article class="card"><span class="number">2</span><h3>Process locally</h3><p>Restricted scopes use local model endpoints and network-isolated scanner processes.</p></article>
+          <article class="card"><span class="number">3</span><h3>Validate every claim</h3><p>Structured output, exact source citations and bounded failure behavior stop plausible prose becoming evidence.</p></article>
+          <article class="card"><span class="number">4</span><h3>Keep people accountable</h3><p>A named reviewer approves the result before an export, ticket or remediation handoff exists.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="dark" id="workflow">
+      <div class="wrap">
+        <div class="intro">
+          <p class="kicker" style="color:#2997ff">Evidence-first workflow</p>
+          <h2>Deterministic where possible. AI where useful. Human where consequential.</h2>
+        </div>
+        <div class="flow">
+          <div class="step"><b>01 · SCOPE</b><p>Authorized repositories, checks, expiry and egress policy.</p></div>
+          <div class="step"><b>02 · SCAN</b><p>Repository policy, supplied SARIF, Semgrep, Gitleaks and offline OSV.</p></div>
+          <div class="step"><b>03 · TRIAGE</b><p>Local AI correlates evidence and proposes context and remediation.</p></div>
+          <div class="step"><b>04 · REVIEW</b><p>A qualified reviewer validates severity, reachability and ownership.</p></div>
+          <div class="step"><b>05 · EXPORT</b><p>One idempotent, approved handoff with a tamper-evident audit trail.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <div class="intro">
+          <p class="kicker" style="color:var(--green)">What the pilot measures</p>
+          <h2>Buy an outcome test, not an AI promise.</h2>
+        </div>
+        <div class="metrics">
+          <div class="metric"><strong>↓</strong><small>Human triage time</small></div>
+          <div class="metric"><strong>↓</strong><small>Duplicate and stale findings</small></div>
+          <div class="metric"><strong>↑</strong><small>Owned dispositions</small></div>
+          <div class="metric"><strong>0</strong><small>Target external egress events</small></div>
+        </div>
+        <p style="color:var(--muted);text-align:center;margin-top:28px">Targets are agreed during discovery. EvidenceFlow does not claim complete vulnerability coverage or compliance certification.</p>
+      </div>
+    </section>
+
+    <section class="soft" id="pilot">
+      <div class="wrap">
+        <div class="intro"><p class="kicker">Commercial path</p><h2>Start narrow. Prove it. Then scale.</h2></div>
+        <div style="margin-top:50px">
+          <article class="offer"><div><h3>1. Assurance discovery</h3></div><p>Scope, threat model, scanner inventory, data handling, baseline metrics and fixed pilot plan.</p><div class="price">€15k–€30k</div></article>
+          <article class="offer"><div><h3>2. Permissioned pilot</h3></div><p>10–20 authorized repositories, local deployment, limited scanner feeds, human review and measured results.</p><div class="price">€45k–€90k</div></article>
+          <article class="offer"><div><h3>3. Platform rollout</h3></div><p>Durable integrations, identity, operations, onboarding, support and organization-wide governance after acceptance.</p><div class="price">€150k–€350k</div></article>
+        </div>
+        <p style="color:var(--muted)">Indicative scope bands excluding VAT. Final pricing depends on procurement, liability, infrastructure, integrations and support.</p>
+      </div>
+    </section>
+
+    <section class="faq" id="faq">
+      <div class="wrap">
+        <div class="intro"><p class="kicker">Questions</p><h2>Clear boundaries are part of the product.</h2></div>
+        <div style="margin-top:50px">
+          <details><summary>Does this replace our security scanners?</summary><p>No. Existing scanners remain the facts source. EvidenceFlow normalizes their output and controls the triage, review and evidence handoff.</p></details>
+          <details><summary>Can source code stay inside our infrastructure?</summary><p>Yes. A restricted pilot uses local checkouts, local model endpoints and network-isolated scanner processes. The deployment design still needs customer approval.</p></details>
+          <details><summary>Does AI automatically open tickets or pull requests?</summary><p>No. The pilot stops at a named approval boundary. External connectors are only added with explicit authorization and idempotent controls.</p></details>
+          <details><summary>Can you guarantee that every vulnerability is found?</summary><p>No credible provider can. We contract for defined scope, evidence handling, review quality and measurable workflow outcomes.</p></details>
+        </div>
+      </div>
+    </section>
+
+    <section class="dark final">
+      <div class="wrap"><p class="kicker" style="color:#2997ff">Kleine Koe · AI operations</p><h2>Make private software assurance reviewable.</h2><p class="sub">Begin with one workflow, 10–20 repositories and acceptance criteria both sides can verify.</p><div class="actions"><a class="btn" href="https://kleinekoe.nl/contact">Discuss a permissioned pilot</a></div></div>
+    </section>
+  </main>
+  <footer><div class="wrap">Kleine Koe · Netherlands · This draft page is not a compliance or legal claim.</div></footer>
+</body>
+</html>

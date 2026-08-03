@@ -1,0 +1,35 @@
+rules:
+  - id: kleinekoe.python.subprocess-shell-true
+    languages: [python]
+    severity: ERROR
+    message: Avoid shell=True; pass a fixed argument list to the subprocess.
+    metadata:
+      category: security
+      technology: [python]
+    patterns:
+      - pattern-either:
+          - pattern: subprocess.run(..., shell=True, ...)
+          - pattern: subprocess.Popen(..., shell=True, ...)
+          - pattern: subprocess.call(..., shell=True, ...)
+
+  - id: kleinekoe.python.dynamic-eval
+    languages: [python]
+    severity: ERROR
+    message: Dynamic eval/exec can turn untrusted data into code execution.
+    metadata:
+      category: security
+      technology: [python]
+    pattern-either:
+      - pattern: eval(...)
+      - pattern: exec(...)
+
+  - id: kleinekoe.python.pickle-load
+    languages: [python]
+    severity: WARNING
+    message: Loading pickle data can execute code; use a non-executable format.
+    metadata:
+      category: security
+      technology: [python]
+    pattern-either:
+      - pattern: pickle.load(...)
+      - pattern: pickle.loads(...)

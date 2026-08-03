@@ -45,3 +45,31 @@ def validate_assessment(case: EvidenceCase, assessment: Assessment) -> None:
             raise ValidationError(
                 f"citation quote does not resolve in source: {citation.source_id}"
             )
+
+
+def validate_assurance_assessment(case: EvidenceCase, assessment: Assessment) -> None:
+    prohibited_labels = {
+        "compliance",
+        "compliant",
+        "certified",
+        "certification",
+        "fully-secure",
+        "no-vulnerabilities",
+    }
+    normalized_labels = {label.strip().lower() for label in assessment.labels}
+    if normalized_labels & prohibited_labels:
+        raise ValidationError("assessment contains a prohibited assurance label")
+    summary = " ".join(assessment.summary.lower().split())
+    prohibited_claims = (
+        "strong compliance",
+        "is compliant",
+        "are compliant",
+        "compliance confirmed",
+        "compliance achieved",
+        "fully secure",
+        "no vulnerabilities",
+        "all vulnerabilities",
+        "certification achieved",
+    )
+    if any(claim in summary for claim in prohibited_claims):
+        raise ValidationError("assessment contains a prohibited assurance claim")

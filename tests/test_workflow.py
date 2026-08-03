@@ -1,3 +1,4 @@
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 import pytest
@@ -10,7 +11,7 @@ from evidenceflow.providers import (
     ProviderError,
     TransientProviderError,
 )
-from evidenceflow.validation import ValidationError
+from evidenceflow.validation import ValidationError, validate_assurance_assessment
 from evidenceflow.workflow import (
     ApprovalRequired,
     EvidenceWorkflow,
@@ -107,6 +108,25 @@ def test_permanent_provider_failure_is_audited(tmp_path: Path) -> None:
     assert "analysis_failed" in (tmp_path / "audit.jsonl").read_text()
 
 
+def test_failed_case_can_be_retried_with_same_evidence(tmp_path: Path) -> None:
+    class FailsOnceProvider:
+        calls = 0
+
+        def analyze(self, evidence_case: EvidenceCase) -> Assessment:
+            self.calls += 1
+            if self.calls == 1:
+                raise ProviderError("first attempt failed")
+            return KeywordProvider().analyze(evidence_case)
+
+    provider = FailsOnceProvider()
+    flow = workflow(tmp_path, provider)
+    with pytest.raises(ProviderError):
+        flow.analyze(case())
+    record = flow.analyze(case())
+    assert record.state.value == "pending_approval"
+    assert flow.telemetry.counters["analysis_retried"] == 1
+
+
 def test_openai_provider_repairs_one_schema_error() -> None:
     class RepairingProvider(OpenAICompatibleProvider):
         responses = iter(
@@ -126,6 +146,33 @@ def test_openai_provider_repairs_one_schema_error() -> None:
     assessment = RepairingProvider("http://local", "test").analyze(case())
     assert assessment.risk == Risk.HIGH
     assert assessment.citations[0].quote == "Unauthorized access was detected."
+
+
+def test_openai_provider_repairs_prohibited_assurance_claim_once() -> None:
+    class RepairingProvider(OpenAICompatibleProvider):
+        responses = iter(
+            [
+                '{"risk":"low","summary":"Strong compliance.",'
+                '"labels":["compliance"],"citations":'
+                '[{"source_id":"source-1","quote":"Unauthorized access was '
+                'detected."}],"confidence":0.8}',
+                '{"risk":"high","summary":"The cited evidence reports '
+                'unauthorized access.","labels":["access-control"],"citations":'
+                '[{"source_id":"source-1","quote":"Unauthorized access was '
+                'detected."}],"confidence":0.8}',
+            ]
+        )
+
+        def _complete(self, messages: list[dict[str, str]]) -> str:
+            return next(self.responses)
+
+    assessment = RepairingProvider(
+        "http://local",
+        "test",
+        assessment_validator=validate_assurance_assessment,
+    ).analyze(case())
+    assert assessment.risk == Risk.HIGH
+    assert assessment.labels == ("access-control",)
 
 
 def test_same_id_with_changed_evidence_is_rejected(tmp_path: Path) -> None:
@@ -148,3 +195,18 @@ def test_hash_chain_detects_tampering(tmp_path: Path) -> None:
     text = audit.path.read_text().replace('"event": "first"', '"event": "changed"')
     audit.path.write_text(text)
     assert not audit.verify()
+
+
+def test_hash_chain_rejects_malformed_json(tmp_path: Path) -> None:
+    audit = AuditLog(tmp_path / "audit.jsonl")
+    audit.append("first", "case-1")
+    audit.path.write_text("not-json\n")
+    assert not audit.verify()
+
+
+def test_hash_chain_serializes_concurrent_appends(tmp_path: Path) -> None:
+    audit = AuditLog(tmp_path / "audit.jsonl")
+    with ThreadPoolExecutor(max_workers=4) as pool:
+        list(pool.map(lambda index: audit.append("event", f"case-{index}"), range(20)))
+    assert audit.verify()
+    assert len(audit.path.read_text().splitlines()) == 20

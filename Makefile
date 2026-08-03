@@ -1,16 +1,30 @@
-.PHONY: demo eval test lint verify
+.PHONY: demo eval test lint verify install-scanners update-osv-db preflight pilot
+
+UV ?= uv
 
 demo:
-	PYTHONPATH=src python3 -m evidenceflow demo
+	PYTHONPATH=src $(UV) run python -m evidenceflow demo
 
 eval:
-	PYTHONPATH=src python3 -m evidenceflow eval --dataset evals/golden.jsonl
+	PYTHONPATH=src $(UV) run python -m evidenceflow eval --dataset evals/golden.jsonl
 
 test:
-	PYTHONPATH=src pytest
+	PYTHONPATH=src $(UV) run --extra dev pytest
 
 lint:
-	ruff check .
-	ruff format --check .
+	$(UV) run --extra dev ruff check .
+	$(UV) run --extra dev ruff format --check .
 
 verify: lint test eval
+
+install-scanners:
+	./scripts/install-scanners.sh
+
+update-osv-db:
+	./scripts/update-osv-database.sh
+
+preflight:
+	PYTHONPATH=src python3 -m evidenceflow preflight
+
+pilot:
+	PYTHONPATH=src python3 -m evidenceflow pilot --scope examples/pilot-scope.json --repo . --repo-id evidenceflow-ai --checks repository-policy semgrep gitleaks osv --offline-db .tools/osv-cache --output-dir artifacts/pilot

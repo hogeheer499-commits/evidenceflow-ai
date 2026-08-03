@@ -1,107 +1,179 @@
-# EvidenceFlow AI
+# Kleine Koe EvidenceFlow
 
-EvidenceFlow is a privacy-first reference workflow for turning operational
-evidence into a structured, cited assessment **without letting an LLM perform
-an uncontrolled side effect**. Every result is schema-checked, every citation
-must resolve to supplied evidence, and publishing requires explicit human
-approval.
+**Sovereign OSS Assurance** for permissioned, locally processed software
+security workflows.
 
-It is a portfolio case for production AI workflow engineering: the difficult
-part is not calling a model, but making the complete process reliable,
-observable, testable, and auditable.
+EvidenceFlow turns supplied repository and scanner evidence into a structured,
+cited assessment **without letting an LLM perform an uncontrolled side effect**.
+Every result is schema-checked, every citation must resolve to supplied evidence
+and publishing requires explicit human approval.
+
+EvidenceFlow is developed as a Kleine Koe product and portfolio case for
+production AI workflow engineering. The difficult part is not calling a model,
+but making the complete process scoped, reliable, observable, testable and
+auditable.
+
+The repository contains a complete single-node pilot slice: explicit
+repository/check authorization, local-only model policy, network-isolated
+scanner execution, SARIF normalization, durable workflow state, private
+evidence packs, management metrics and a loopback review console. It remains a
+pilot product, not a multi-tenant platform, compliance certification or
+government deployment.
 
 ## What it demonstrates
 
-- OpenAI-compatible or fully local model adapters (Ollama, vLLM, LocalAI, or a
-  hosted compatible endpoint).
+- OpenAI-compatible or fully local model adapters for Ollama, vLLM, LocalAI or
+  a compatible hosted endpoint.
 - Deterministic validation before and after the model call.
-- Bounded transport retries plus one controlled schema-repair attempt, followed
-  by fail-closed behavior for malformed model output.
-- Grounded citations: quoted text must exist in the referenced source.
-- Idempotency: reprocessing the same case cannot duplicate the final action.
-- Human approval before the publisher is called.
+- Bounded transport retries and one controlled schema-repair attempt, followed
+  by fail-closed behavior.
+- Grounded citations whose exact quotations resolve to supplied evidence.
+- Expiring repository/check scopes and local-only endpoint policy.
+- Allowlisted Semgrep, Gitleaks and offline OSV execution without a shell.
+- Bubblewrap network isolation for restricted external scanner processes.
+- Bounded SARIF ingestion and prioritized model evidence.
+- Durable SQLite state, retryable failed analysis and idempotent approved
+  exports.
+- Named human approval and a CSRF-protected, loopback-only review console.
 - Tamper-evident JSONL audit records linked by SHA-256 hashes.
-- Workflow counters and latency measurements, with an optional OpenTelemetry
-  adapter that uses the application's configured meter and tracer providers.
+- Workflow counters, latency measurements and optional OpenTelemetry adapters.
 - A synthetic golden dataset and reproducible evaluation report.
 
 ## Architecture
 
 ```mermaid
 flowchart LR
-    A[Evidence sources] --> B[Input validation]
-    B --> C[LLM provider]
-    C --> D[Schema and citation validation]
-    D --> E[Human approval gate]
-    E --> F[Idempotent publisher]
-    B --> G[Hash-chained audit log]
-    C --> G
-    D --> G
-    E --> G
-    F --> G
-    C --> H[Metrics and traces]
-    D --> H
-    F --> H
+    S[Signed scope] --> O[Allowlisted scanners]
+    R[Authorized checkout] --> O
+    O --> E[Preserved raw evidence]
+    E --> L[Local AI or deterministic triage]
+    L --> V[Schema and citation validation]
+    V --> Q[(Durable state)]
+    V --> A[Hash-chained audit]
+    Q --> H[Named human approval]
+    H --> P[Idempotent approved export]
 ```
 
-See [docs/architecture.md](docs/architecture.md) for failure boundaries and
-design trade-offs.
+See [docs/architecture.md](docs/architecture.md) and
+[docs/threat-model.md](docs/threat-model.md).
 
 ## Quick start
 
-The deterministic demo and tests require only Python 3.12:
+The deterministic demo and tests require Python 3.12:
 
 ```bash
-cd evidenceflow-ai
 PYTHONPATH=src python3 -m evidenceflow demo
 PYTHONPATH=src python3 -m evidenceflow eval --dataset evals/golden.jsonl
 PYTHONPATH=src pytest
 ```
 
-The demo intentionally pauses before publishing, then records a named approval
-and publishes exactly once. Its audit trail is written under `artifacts/`.
+## Run the complete permissioned pilot
 
-## Use an OpenAI-compatible local endpoint
+Install pinned scanner binaries and download the OSV database before customer
+egress is disabled:
+
+```bash
+scripts/install-scanners.sh
+scripts/update-osv-database.sh
+PYTHONPATH=src python3 -m evidenceflow preflight
+```
+
+Preflight does not merely locate Bubblewrap: it starts a bounded network-
+isolation smoke test. Containers that deny the required user/network namespace
+operations fail preflight. Do not bypass this check for restricted evidence;
+use a compatible Linux host or explicitly redesign and re-review the isolation
+boundary.
+
+Run all supported local checks against the explicitly authorized example scope:
+
+```bash
+PYTHONPATH=src python3 -m evidenceflow pilot \
+  --scope examples/pilot-scope.json \
+  --repo . \
+  --repo-id evidenceflow-ai \
+  --checks repository-policy semgrep gitleaks osv \
+  --offline-db .tools/osv-cache \
+  --output-dir artifacts/pilot
+```
+
+The command writes preserved scanner output, execution receipts, a bounded
+evidence case, a validated assessment, pilot metrics, a management summary, a
+hash-chained audit log and a private evidence pack. It deliberately stops in
+`pending_approval`.
+
+Review from the CLI or start the local console:
+
+```bash
+PYTHONPATH=src python3 -m evidenceflow status \
+  --state-db artifacts/pilot/workflow.db
+
+PYTHONPATH=src python3 -m evidenceflow serve \
+  --state-db artifacts/pilot/workflow.db \
+  --audit artifacts/pilot/audit.jsonl \
+  --approved-dir artifacts/pilot/approved
+```
+
+The dashboard refuses non-loopback binds. Approval and export are separate,
+named and audited state transitions.
+
+## Use a local model
+
+Restricted scopes accept loopback endpoints only:
 
 ```bash
 export EVIDENCEFLOW_BASE_URL=http://127.0.0.1:11434/v1
-export EVIDENCEFLOW_MODEL=qwen3:8b
+export EVIDENCEFLOW_MODEL=qwen3.6:35b-a3b
 export EVIDENCEFLOW_API_KEY=local
-PYTHONPATH=src python3 -m evidenceflow analyze examples/incident.json
+export EVIDENCEFLOW_TIMEOUT_SECONDS=180
+export EVIDENCEFLOW_MAX_TOKENS=4096
+PYTHONPATH=src python3 -m evidenceflow pilot \
+  --scope examples/pilot-scope.json \
+  --repo . \
+  --repo-id evidenceflow-ai \
+  --checks repository-policy semgrep \
+  --output-dir artifacts/local-model-pilot
 ```
 
-The provider requests JSON and validates the response locally. Model output is
-never trusted merely because it is valid JSON.
-
-### Verified local adapter
-
-The OpenAI-compatible adapter was smoke-tested against local Ollama with
-`qwen2.5-coder:7b`. The first loose-schema response was rejected fail-closed.
-After tightening the contract and adding one bounded schema-repair attempt, the
-model produced a valid assessment whose citation resolved exactly in the
-supplied synthetic evidence. This proves transport, schema validation, repair,
-and grounding behavior; it is not an accuracy benchmark for the model.
+Local Qwen development runs processed five deterministic observations and
+returned five exact citations. Observed model latency ranged from about 58 to
+104 seconds. The final guarded repair-path run took approximately 104 seconds
+and returned a low-risk assessment; an earlier input/run returned medium risk.
+Timeout, truncated-reasoning and prohibited-assurance responses were rejected
+fail-closed. These runs prove the integration and safety path, not model
+accuracy, stability or capacity.
 
 ## Evaluation contract
 
-`evals/golden.jsonl` contains synthetic cases only. The evaluation measures:
+`evals/golden.jsonl` contains synthetic cases only. It measures risk-label
+accuracy, citation validity, invalid-output rejection, approval safety and
+duplicate-publish prevention. It is an executable regression contract, not an
+enterprise benchmark.
 
-- risk-label accuracy;
-- citation validity;
-- invalid-output rejection;
-- approval-gate safety;
-- duplicate-publish prevention.
+## Product and commercial material
 
-Run `python3 -m evidenceflow eval` to create `artifacts/eval-report.json`. The
-repository does not claim enterprise accuracy from a tiny synthetic dataset;
-the dataset is an executable regression contract, not a marketing benchmark.
+- [Product discovery](docs/product-discovery.md)
+- [Pilot offer and pitch](docs/pilot-offer-and-pitch.md)
+- [Commercial one-pager](docs/commercial/one-pager.md)
+- [Pilot runbook](docs/operations/pilot-runbook.md)
+- [Independent reviewer and learning handoff](docs/fable-handoff.md)
+- [CV case study](docs/cv-case-study.md)
+- [Landing-page draft](site/sovereign-oss-assurance.html)
 
-## Recruiter-ready project statement
+## Recruiter-ready statement
 
-> Built an approval-gated AI evidence-triage workflow with local/OpenAI-
-> compatible inference, grounded citations, bounded retries, idempotent side
-> effects, tamper-evident auditing, OpenTelemetry hooks, and regression evals.
+> Built a scope-enforced, approval-gated local AI assurance workflow with
+> network-isolated scanner orchestration, SARIF normalization, grounded
+> citations, durable state, idempotent exports, a loopback review console,
+> tamper-evident auditing, OpenTelemetry hooks and regression evaluations.
 
-Use that wording only after understanding the design and being able to explain
-the tests and trade-offs. Replace it with measured numbers from the generated
-evaluation report once the project is published.
+Only add customer, repository-count, accuracy, uptime or time-saved claims after
+they have actually been measured and approved for disclosure.
+
+## Commercial and security boundaries
+
+The price bands and templates in `docs/commercial/` are proposal material, not
+accepted customer contracts. Templates require legal, insurance, tax and
+procurement review. See [SECURITY.md](SECURITY.md) for private vulnerability
+reporting.
+
+Kleine Koe: https://kleinekoe.nl
