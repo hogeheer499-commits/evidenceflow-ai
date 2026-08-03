@@ -1,12 +1,19 @@
 # Pilot offer and sales pitch
 
+> **Commercial status — 4 August 2026:** the bands below are future enterprise
+> packaging hypotheses, not the current cold-outreach offer and not validated
+> pricing. KleineKoe's current first paid step is a two-working-day evidence
+> discovery for €950, without customer data or environment access, ending in a
+> go/no-go and case-specific estimate. Do not send or quote the enterprise
+> bands until a real buyer, procurement route and delivery scope justify them.
+
 ## Offer ladder
 
 ### 1. Sovereign OSS assurance discovery — €15k–€30k
 
-Use this as the first paid engagement unless the customer already has a
-documented threat model, scope, evidence inventory, baseline metrics and
-procurement route.
+Use this only after the €950 problem/fit discovery proves that a larger,
+procurement-bearing enterprise discovery is needed. It is not the first cold
+outreach transaction.
 
 Deliverables:
 

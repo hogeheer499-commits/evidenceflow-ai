@@ -158,6 +158,11 @@ enterprise benchmark.
 
 ## Product and commercial material
 
+The current market-test entry offer is a €950, two-working-day evidence
+discovery. Larger bands in the commercial documents are clearly labelled
+future enterprise hypotheses; they are not validated prices or first-contact
+offers.
+
 - [Product discovery](docs/product-discovery.md)
 - [Pilot offer and pitch](docs/pilot-offer-and-pitch.md)
 - [Commercial one-pager](docs/commercial/one-pager.md)

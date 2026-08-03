@@ -1,5 +1,10 @@
 # Proposal template — Sovereign OSS Assurance Discovery
 
+> **Do not send as the first market-test proposal.** This is a future
+> enterprise template for a buyer who has already completed the €950 evidence
+> discovery and has a confirmed multi-repository need, owner and procurement
+> route. The price band is not validated by customer sales.
+
 Prepared by **Kleine Koe** for `[customer]`  
 Proposal date: `[date]`  
 Validity: `[validity]`

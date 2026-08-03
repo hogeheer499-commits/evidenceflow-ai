@@ -1,5 +1,10 @@
 # Kleine Koe EvidenceFlow
 
+> **Internal future-state one-pager.** The enterprise bands below are untested
+> scope hypotheses and are not the current first offer. For the present market
+> test, offer only the €950, two-working-day evidence discovery described in the
+> Fable handoff; quote a larger engagement only after its go/no-go.
+
 ## Sovereign OSS Assurance
 
 Government and regulated engineering teams rarely lack scanners. They lack a
