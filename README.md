@@ -84,6 +84,13 @@ operations fail preflight. Do not bypass this check for restricted evidence;
 use a compatible Linux host or explicitly redesign and re-review the isolation
 boundary.
 
+GitHub-hosted Actions runners currently deny that Bubblewrap network namespace.
+CI therefore runs `make pilot-policy` to exercise scope, evidence processing,
+validation, durable state and the approval/audit boundary using the deterministic
+repository-policy check. It does **not** claim that the external scanner path
+ran. The Semgrep/Gitleaks/OSV pilot remains a separate required test on a
+compatible Linux host.
+
 Run all supported local checks against the explicitly authorized example scope:
 
 ```bash

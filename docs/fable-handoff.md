@@ -54,6 +54,11 @@ permitted`); the complete scanner pilot therefore correctly remained blocked
 there. Re-run this step on the clean Linux review host. Do not weaken isolation
 to make the test pass.
 
+The GitHub Actions assurance job deliberately runs `make pilot-policy`, not the
+external scanners, because GitHub-hosted runners enforce the same namespace
+restriction. That green job proves the state-machine and audit smoke path only.
+Treat a compatible-host `make pilot` receipt as separately required evidence.
+
 ## What to teach, in order
 
 1. **Data contract** — `src/evidenceflow/models.py`: evidence cases,

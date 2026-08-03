@@ -1,4 +1,4 @@
-.PHONY: demo eval test lint verify install-scanners update-osv-db preflight pilot
+.PHONY: demo eval test lint verify install-scanners update-osv-db preflight pilot pilot-policy
 
 UV ?= uv
 
@@ -28,3 +28,6 @@ preflight:
 
 pilot:
 	PYTHONPATH=src python3 -m evidenceflow pilot --scope examples/pilot-scope.json --repo . --repo-id evidenceflow-ai --checks repository-policy semgrep gitleaks osv --offline-db .tools/osv-cache --output-dir artifacts/pilot
+
+pilot-policy:
+	PYTHONPATH=src python3 -m evidenceflow pilot --scope examples/pilot-scope.json --repo . --repo-id evidenceflow-ai --checks repository-policy --output-dir artifacts/pilot
