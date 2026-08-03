@@ -16,11 +16,16 @@ Use Python 3.12 and `uv`. Do not reuse the developer's ignored `artifacts/` or
 `.tools/` directories when judging reproducibility.
 
 ```bash
-git clone https://github.com/hogeheer499-commits/evidenceflow-ai.git
+git clone --branch agent/publish-evidenceflow-pilot \
+  https://github.com/hogeheer499-commits/evidenceflow-ai.git
 cd evidenceflow-ai
 uv sync --extra dev
 make verify
 ```
+
+The review branch is published in draft PR
+https://github.com/hogeheer499-commits/evidenceflow-ai/pull/1. After that PR is
+reviewed and merged, the explicit `--branch` argument can be omitted.
 
 Expected regression evidence at this release:
 
