@@ -3,6 +3,15 @@
 **Sovereign OSS Assurance** for permissioned, locally processed software
 security workflows.
 
+## In plain language
+
+EvidenceFlow helps a reviewer answer three simple questions about an
+AI-assisted software-security assessment: what evidence was used, which checks
+passed or failed, and who approved the final result. It runs approved checks on
+an explicitly authorized codebase, lets local AI organize rather than invent
+the evidence, and prevents anything from being released until a named person
+has reviewed and approved it.
+
 EvidenceFlow turns supplied repository and scanner evidence into a structured,
 cited assessment **without letting an LLM perform an uncontrolled side effect**.
 Every result is schema-checked, every citation must resolve to supplied evidence
