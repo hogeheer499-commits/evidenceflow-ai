@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import urllib.error
 import urllib.request
+from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Protocol
 
@@ -55,6 +56,9 @@ class OpenAICompatibleProvider:
     api_key: str = "local"
     timeout_seconds: float = 45.0
     schema_repair_attempts: int = 1
+    max_tokens: int = 1200
+    disable_thinking: bool = False
+    assessment_validator: Callable[[EvidenceCase, Assessment], None] | None = None
 
     def analyze(self, case: EvidenceCase) -> Assessment:
         sources = [{"source_id": s.source_id, "text": s.text} for s in case.sources]
@@ -73,7 +77,9 @@ class OpenAICompatibleProvider:
                 "role": "system",
                 "content": (
                     "You are an evidence classification component. Follow the JSON "
-                    "contract exactly; never return Markdown."
+                    "contract exactly; never return Markdown. Do not claim legal or "
+                    "regulatory compliance, certification, complete security, or the "
+                    "absence of vulnerabilities from repository or scanner evidence."
                 ),
             },
             {"role": "user", "content": prompt},
@@ -81,19 +87,29 @@ class OpenAICompatibleProvider:
         content = self._complete(messages)
         for attempt in range(self.schema_repair_attempts + 1):
             try:
-                return self._parse_assessment(content)
-            except ProviderError:
+                assessment = self._parse_assessment(content)
+                if self.assessment_validator is not None:
+                    self.assessment_validator(case, assessment)
+                return assessment
+            except (ProviderError, ValueError) as exc:
                 if attempt == self.schema_repair_attempts:
-                    raise
+                    if isinstance(exc, ProviderError):
+                        raise
+                    raise ProviderError(
+                        "provider returned prohibited assurance semantics"
+                    ) from exc
                 messages.extend(
                     [
                         {"role": "assistant", "content": content},
                         {
                             "role": "user",
                             "content": (
-                                "The response violated the required JSON contract. "
-                                "Return a corrected object only. Every citation must "
-                                "contain exactly source_id and an exact quote."
+                                "The response violated the required JSON or assurance "
+                                "contract. Return a corrected object only. Every "
+                                "citation must contain exactly source_id and an exact "
+                                "quote. Describe only the bounded evidence; do not use "
+                                "compliance, compliant, certification, certified, "
+                                "fully secure, or no-vulnerabilities claims or labels."
                             ),
                         },
                     ]
@@ -106,8 +122,11 @@ class OpenAICompatibleProvider:
             "model": self.model,
             "messages": messages,
             "temperature": 0,
+            "max_tokens": self.max_tokens,
             "response_format": {"type": "json_object"},
         }
+        if self.disable_thinking:
+            body["think"] = False
         request = urllib.request.Request(
             f"{self.base_url.rstrip('/')}/chat/completions",
             data=json.dumps(body).encode(),

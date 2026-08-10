@@ -1,0 +1,40 @@
+publiccodeYmlVersion: "0.4"
+
+name: Kleine Koe EvidenceFlow
+url: "https://github.com/hogeheer499-commits/evidenceflow-ai.git"
+landingURL: "https://kleinekoe.nl"
+softwareVersion: "0.2.0"
+releaseDate: "2026-07-17"
+
+platforms:
+  - linux
+
+developmentStatus: development
+softwareType: "standalone/backend"
+
+description:
+  en:
+    shortDescription: >
+      Permissioned local AI workflow for traceable software-assurance evidence.
+    longDescription: >
+      EvidenceFlow normalizes repository and scanner evidence, optionally uses
+      a local language model for bounded triage, validates exact citations and
+      requires named human approval before an idempotent local export.
+    features:
+      - Expiring repository and check scopes
+      - Network-isolated scanner orchestration
+      - Local AI with fail-closed validation
+      - Durable approval and audit workflow
+
+legal:
+  license: Apache-2.0
+
+maintenance:
+  type: community
+  contacts:
+    - name: Kleine Koe
+
+localisation:
+  localisationReady: false
+  availableLanguages:
+    - en

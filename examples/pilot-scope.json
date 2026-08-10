@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "engagement_id": "demo-public-oss-001",
+  "customer": "Synthetic public-sector pilot",
+  "expires_on": "2027-12-31",
+  "egress": "local-only",
+  "repositories": [
+    {
+      "repository_id": "evidenceflow-ai",
+      "path": "..",
+      "allowed_checks": [
+        "repository-policy",
+        "sarif-import",
+        "semgrep",
+        "gitleaks",
+        "osv"
+      ]
+    }
+  ]
+}
