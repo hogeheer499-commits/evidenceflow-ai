@@ -1,26 +1,42 @@
 # Kleine Koe EvidenceFlow
 
-**Sovereign OSS Assurance** for permissioned, locally processed software
-security workflows.
+**In one minute.** EvidenceFlow is a small open-source tool I built to make
+AI-assisted review work checkable. It takes the evidence for a software
+security review (scanner results, code, quotes), lets a locally running AI
+model *organise* that evidence but never invent it, and refuses to publish
+anything until a named person has looked at it and approved it. Every step
+leaves a record you can verify afterwards. It is a working pilot with an
+automated test suite, not a finished product.
 
-## In plain language
+**Why the name.** It is literal: evidence flows through the tool. Findings
+and code go in, every claim the model makes has to point back to something
+that went in, and what comes out is an approved report with an audit trail
+of who decided what. Nothing is claimed that cannot be traced to its
+evidence. That habit — say nothing you cannot point to — is also how the
+two experiments further down were run.
 
-EvidenceFlow helps a reviewer answer three simple questions about an
-AI-assisted software-security assessment: what evidence was used, which checks
-passed or failed, and who approved the final result. It runs approved checks on
-an explicitly authorized codebase, lets local AI organize rather than invent
-the evidence, and prevents anything from being released until a named person
-has reviewed and approved it.
+**What is in this repository.**
 
-EvidenceFlow turns supplied repository and scanner evidence into a structured,
-cited assessment **without letting an LLM perform an uncontrolled side effect**.
-Every result is schema-checked, every citation must resolve to supplied evidence
-and publishing requires explicit human approval.
+1. The workflow itself, runnable on one machine, with its tests
+   (sections "Quick start" onwards).
+2. Two experiments from August 2026 in which I tested whether a method
+   works, with the pass/fail criteria written down before the runs
+   (section "Two experiments"):
+   - **Can a small vision model learn to tell damage types apart from
+     photos?** Yes. After fine-tuning on 1,610 labelled photos it scored
+     macro-F1 0.76 on 460 photos it had never seen, against 0.52 before
+     fine-tuning. It also knows when it is unsure: if it only answers the
+     70% of photos it is most confident about, it is right 87% of the time.
+   - **Can a photo be turned into millimetre measurements?** The code chain
+     works: camera calibration, lens correction and a reference pattern
+     give a median error of 0.08% on test images with known answers. The
+     real-camera check is the written-down next step.
 
-EvidenceFlow is developed as a Kleine Koe product and portfolio case for
-production AI workflow engineering. The difficult part is not calling a model,
-but making the complete process scoped, reliable, observable, testable and
-auditable.
+Each experiment folder has a README that says what it shows, what it does
+not show, and how to check it yourself. Dates, hashes and versions are
+recorded and have not been adjusted.
+
+## What the pilot contains
 
 The repository contains a complete single-node pilot slice: explicit
 repository/check authorization, local-only model policy, network-isolated
@@ -29,7 +45,7 @@ evidence packs, management metrics and a loopback review console. It remains a
 pilot product, not a multi-tenant platform, compliance certification or
 government deployment.
 
-## What it demonstrates
+## Feature list (technical)
 
 - OpenAI-compatible or fully local model adapters for Ollama, vLLM, LocalAI or
   a compatible hosted endpoint.
@@ -47,6 +63,15 @@ government deployment.
 - Tamper-evident JSONL audit records linked by SHA-256 hashes.
 - Workflow counters, latency measurements and optional OpenTelemetry adapters.
 - A synthetic golden dataset and reproducible evaluation report.
+- A vision fine-tuning experiment with criteria fixed in advance: zero-shot baseline vs
+  LoRA fine-tune of a vision-language model on a labeled image dataset,
+  evaluated on a frozen held-out test split with a fresh-process repeat
+  (macro-F1 0.52 -> 0.76), plus a measured abstention/risk-coverage
+  analysis on images (see [Demonstrators](#demonstrators)).
+- A calibrated measurement experiment with criteria fixed in advance: camera calibration,
+  distortion correction, plane homography and pixel-to-millimetre
+  measurement validated end-to-end against synthetic ground truth
+  (median error 0.08%; see [Demonstrators](#demonstrators)).
 
 ## Architecture
 
@@ -179,6 +204,83 @@ offers.
 - [Independent reviewer and learning handoff](docs/fable-handoff.md)
 - [CV case study](docs/cv-case-study.md)
 - [Landing-page draft](site/sovereign-oss-assurance.html)
+
+## Two experiments
+
+Both were done in August 2026 to find out whether two methods actually work.
+In both cases the acceptance
+criteria, the fixed configuration and the scripts were written down before
+the first run, and the results were added afterwards without touching the
+criteria; each README keeps the original pre-registration section intact
+above the results. The point is simple: decide what "good enough" means
+before you see the numbers.
+
+### 1. Teaching a vision model to recognise damage types
+
+Folder: [`demonstrators/vision-lora-car-damage/`](demonstrators/vision-lora-car-damage/)
+
+- **Question.** Can a small open vision-language model (Qwen2.5-VL, 3B
+  parameters) learn to classify photos of damage after a short fine-tune
+  on my own AMD hardware, and by how much does it beat the same model
+  untrained?
+- **Setup.** 2,300 labelled car-damage photos (public, MIT licence), split
+  once into train / validation / test with every file hashed. The model
+  first answers untrained (the baseline), then after a LoRA fine-tune on
+  the 1,610 training photos. Both are scored on the same 460 test photos
+  it never saw. Evaluation repeated in a fresh process.
+- **Result.** Accuracy 63% → 77%; macro-F1 0.52 → 0.76 (the pass mark was
+  +0.10). The untrained model almost never recognised "crushed" damage
+  (7% and 2% recall); after fine-tuning 70% and 53%. The repeat run gave
+  byte-identical results.
+- **Knowing when to ask a human.** If the model is allowed to skip the
+  photos it is least sure about, it gets better on the rest: 81% right
+  when it answers 90% of photos, 87% at 70%, 93% at 50%. The photos it
+  skips are genuinely harder (41–62% right). Its confidence also became
+  more honest after fine-tuning (calibration error 0.095 → 0.049). This is
+  the image version of the "abstain and escalate" rule the workflow above
+  is built on.
+- **What this does not show.** Results on any other kind of photo,
+  production readiness, or a guaranteed confidence. One training run, one
+  seed. Car damage was chosen because it is public and labelled, not
+  because it is the end use.
+- **Check it yourself.** `cd demonstrators/vision-lora-car-damage && sha256sum -c manifest.sha256`,
+  then `python scripts/04_report.py …` regenerates every number from the
+  committed per-photo predictions. Training and evaluation commands are
+  in the README.
+
+### 2. Measuring millimetres from a photo
+
+Folder: [`demonstrators/camera-calibration-planar-mm/`](demonstrators/camera-calibration-planar-mm/)
+
+- **Question.** Can a photo of an object next to a printed reference
+  pattern be turned into a real-world length, and how accurately?
+- **Setup.** The full chain — camera calibration from a chessboard, lens
+  distortion correction, mapping the reference plane to millimetres,
+  measuring the distance between two points — run on images generated
+  with a simulated camera whose properties and true distances are known
+  exactly. That makes every error measurable.
+- **Result.** The calibration recovered the simulated camera to within
+  0.16%; the measured 60.000 mm distance came out with a median error of
+  0.08% (worst case 0.28%) over 12 images at two distances and three
+  angles. Rerunning gives identical numbers.
+- **What this does not show.** A real camera, print or caliper. It proves
+  the code chain is right; the physical check — with its acceptance
+  criteria already written down in the README — is the next step, and
+  measuring from uncontrolled consumer photos is a separate, open problem.
+- **Check it yourself.** `cd demonstrators/camera-calibration-planar-mm && sha256sum -c manifest.sha256`;
+  the whole thing regenerates from `scripts/synth_generate.py`.
+
+## How this was built
+
+- Both experiments ran on my own workstation (AMD Ryzen AI MAX+ 395 with a
+  Radeon 8060S) in August 2026, in a pinned container whose digest is
+  recorded in each folder's `versions.txt`.
+- No dates were changed. Author times, commit times and GitHub's push
+  records are as they happened.
+- They follow the same working habit as everything else I publish:
+  dated, hashed, reproducible runs with repeat checks, pinned versions,
+  negative results kept in, and an explicit line about what a result does
+  not prove.
 
 ## Recruiter-ready statement
 

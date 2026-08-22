@@ -1,0 +1,102 @@
+{
+  "baseline": {
+    "n": 460,
+    "risk_coverage": [
+      {
+        "coverage": 1.0,
+        "kept": 460,
+        "threshold": 0.28391581773757935,
+        "selective_accuracy": 0.6326086956521739,
+        "abstained_accuracy": null
+      },
+      {
+        "coverage": 0.95,
+        "kept": 437,
+        "threshold": 0.43029147386550903,
+        "selective_accuracy": 0.6521739130434783,
+        "abstained_accuracy": 0.2608695652173913
+      },
+      {
+        "coverage": 0.9,
+        "kept": 414,
+        "threshold": 0.47899824380874634,
+        "selective_accuracy": 0.6714975845410628,
+        "abstained_accuracy": 0.2826086956521739
+      },
+      {
+        "coverage": 0.8,
+        "kept": 368,
+        "threshold": 0.5763885378837585,
+        "selective_accuracy": 0.7065217391304348,
+        "abstained_accuracy": 0.33695652173913043
+      },
+      {
+        "coverage": 0.7,
+        "kept": 322,
+        "threshold": 0.6369090676307678,
+        "selective_accuracy": 0.7298136645962733,
+        "abstained_accuracy": 0.4057971014492754
+      },
+      {
+        "coverage": 0.5,
+        "kept": 230,
+        "threshold": 0.7479467391967773,
+        "selective_accuracy": 0.7913043478260869,
+        "abstained_accuracy": 0.47391304347826085
+      }
+    ],
+    "ece_10bin": 0.09497783002646075,
+    "brier_maxprob": 0.20571296060322009,
+    "overall_accuracy": 0.6326086956521739
+  },
+  "finetuned": {
+    "n": 460,
+    "risk_coverage": [
+      {
+        "coverage": 1.0,
+        "kept": 460,
+        "threshold": 0.2790730595588684,
+        "selective_accuracy": 0.7739130434782608,
+        "abstained_accuracy": null
+      },
+      {
+        "coverage": 0.95,
+        "kept": 437,
+        "threshold": 0.5127812623977661,
+        "selective_accuracy": 0.7940503432494279,
+        "abstained_accuracy": 0.391304347826087
+      },
+      {
+        "coverage": 0.9,
+        "kept": 414,
+        "threshold": 0.5511679649353027,
+        "selective_accuracy": 0.8140096618357487,
+        "abstained_accuracy": 0.41304347826086957
+      },
+      {
+        "coverage": 0.8,
+        "kept": 368,
+        "threshold": 0.6430813670158386,
+        "selective_accuracy": 0.8478260869565217,
+        "abstained_accuracy": 0.4782608695652174
+      },
+      {
+        "coverage": 0.7,
+        "kept": 322,
+        "threshold": 0.7185487151145935,
+        "selective_accuracy": 0.8726708074534162,
+        "abstained_accuracy": 0.5434782608695652
+      },
+      {
+        "coverage": 0.5,
+        "kept": 230,
+        "threshold": 0.8544267416000366,
+        "selective_accuracy": 0.9304347826086956,
+        "abstained_accuracy": 0.6173913043478261
+      }
+    ],
+    "ece_10bin": 0.0493533718845119,
+    "brier_maxprob": 0.14159572042816787,
+    "overall_accuracy": 0.7739130434782608
+  }
+}

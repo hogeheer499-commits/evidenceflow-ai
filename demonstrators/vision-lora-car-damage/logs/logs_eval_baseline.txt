@@ -1,0 +1,30 @@
+🦥 Unsloth: Will patch your computer to enable 2x faster free finetuning.
+🦥 Unsloth Zoo will now patch everything to make training faster!
+==((====))==  Unsloth 2026.7.3: Fast Qwen2_5_Vl patching. Transformers: 4.57.6.
+   \\   /|    AMD Radeon 8060S. Num GPUs = 1. Max memory: 120.0 GB. Platform: Linux.
+Unsloth: Fast downloading is enabled - ignore downloading bars which are red colored!
+Unsloth: QLoRA and full finetuning all not selected. Switching to 16bit LoRA.
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]
+Loading checkpoint shards:  50%|█████     | 1/2 [03:33<03:33, 213.68s/it]
+Loading checkpoint shards: 100%|██████████| 2/2 [04:23<00:00, 117.58s/it]
+Loading checkpoint shards: 100%|██████████| 2/2 [04:23<00:00, 132.00s/it]
+The image processor of type `Qwen2VLImageProcessor` is now loaded as a fast processor by default, even if the model checkpoint was saved with a slow processor. This is a breaking change and may produce slightly different outputs. To continue using the slow processor, instantiate this class with `use_fast=False`. Note that this behavior will be extended to all models in a future release.
+25/460 acc=0.960 13.18s/img
+50/460 acc=0.960 8.13s/img
+75/460 acc=0.973 6.03s/img
+100/460 acc=0.970 4.98s/img
+125/460 acc=0.784 4.08s/img
+150/460 acc=0.673 3.47s/img
+175/460 acc=0.583 3.04s/img
+200/460 acc=0.605 2.72s/img
+225/460 acc=0.636 2.47s/img
+250/460 acc=0.660 2.26s/img
+275/460 acc=0.680 2.10s/img
+300/460 acc=0.697 1.96s/img
+325/460 acc=0.720 1.85s/img
+350/460 acc=0.706 1.75s/img
+375/460 acc=0.661 1.66s/img
+400/460 acc=0.620 1.58s/img
+425/460 acc=0.628 1.52s/img
+450/460 acc=0.631 1.46s/img
+DONE test: n=460 accuracy=0.6326 elapsed=660.0s

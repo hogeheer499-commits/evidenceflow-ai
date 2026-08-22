@@ -1,0 +1,16 @@
+{
+  "train_samples": 1610,
+  "epochs": 2.0,
+  "lr": 0.0002,
+  "rank": 16,
+  "elapsed_s": 3751.0632486343384,
+  "metrics": {
+    "train_runtime": 3748.3136,
+    "train_samples_per_second": 0.859,
+    "train_steps_per_second": 0.108,
+    "total_flos": 2.354077787005747e+16,
+    "train_loss": 0.1494361783013596,
+    "epoch": 2.0
+  },
+  "max_memory_reserved_gb": 10.185867264
+}

@@ -1,0 +1,16 @@
+python 3.13.14
+torch 2.13.0+rocm7.2 hip 7.2.53211
+gpu AMD Radeon 8060S
+unsloth 2026.7.3
+transformers 4.57.6
+peft 0.18.1
+trl 0.23.1
+datasets 4.3.0
+PIL 12.2.0
+host kernel: 7.0.0-28-generic
+container image: ghcr.io/justin-noel/amd-strix-halo-unsloth-toolboxes@sha256:8285eac06bf33398ad2605387e98d77eba30379cf690af755e238967ef238c3d
+base model: unsloth/Qwen2.5-VL-3B-Instruct @ 7442c03aeb0209ebdb7b03f60c9152316ee26955
+base model shard sha256: 6b45c7afe391b4d9cc49f1ed3f6976f4a25ed40aa2165ed2ae118ff549355985 (model-00001-of-00002.safetensors), d4578eeedb5bac3eab03fed443adbf31c3566bf02ba9ed185d0be0b0671c9550 (model-00002-of-00002.safetensors)
+dataset: DrBimmer/comprehensive-car-damage @ 355b0990ec008e15963055e6bb448045a65040a3 (MIT)
+manifest.csv sha256: 0e42c0de3b7e8e77c69757d0e3df0480a82a99d5f015b2b00cb7ff143f8cf182
+adapter_model.safetensors sha256: 98714d4a9cf72f975db529a5097891793c2edfd3266b887a75c8e16af301199c (164,458,848 bytes; not committed)

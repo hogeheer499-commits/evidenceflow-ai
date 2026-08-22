@@ -1,0 +1,13 @@
+image,px1,px2,measured_mm
+d500_a00_synth_r1_synthdots.png,"(np.float64(915.051724137931), np.float64(413.94827586206895))","(np.float64(915.0), np.float64(546.0))",60.167
+d500_a15_synth_r2_synthdots.png,"(np.float64(919.5185185185185), np.float64(415.1296296296296))","(np.float64(910.6530612244898), np.float64(542.6530612244898))",60.089
+d500_a15_synth_r3_synthdots.png,"(np.float64(924.1076923076923), np.float64(409.2))","(np.float64(924.0625), np.float64(550.625))",60.162
+d500_a15_synth_r6_synthdots.png,"(np.float64(926.4090909090909), np.float64(420.8333333333333))","(np.float64(921.8833333333333), np.float64(556.7333333333333))",60.025
+d500_a30_synth_r4_synthdots.png,"(np.float64(923.5), np.float64(421.0))","(np.float64(907.0666666666667), np.float64(535.4444444444445))",60.116
+d500_a30_synth_r5_synthdots.png,"(np.float64(912.3108108108108), np.float64(404.4864864864865))","(np.float64(912.2876712328767), np.float64(555.4520547945206))",59.980
+d700_a00_synth_r1_synthdots.png,"(np.float64(836.4074074074074), np.float64(527.2592592592592))","(np.float64(836.4074074074074), np.float64(432.74074074074076))",59.989
+d700_a15_synth_r2_synthdots.png,"(np.float64(838.6153846153846), np.float64(433.9230769230769))","(np.float64(834.1363636363636), np.float64(525.0))",59.977
+d700_a15_synth_r3_synthdots.png,"(np.float64(839.0), np.float64(529.5))","(np.float64(839.0), np.float64(430.5))",59.998
+d700_a15_synth_r6_synthdots.png,"(np.float64(839.5), np.float64(438.7857142857143))","(np.float64(838.3846153846154), np.float64(534.1538461538462))",60.025
+d700_a30_synth_r4_synthdots.png,"(np.float64(840.6666666666666), np.float64(438.125))","(np.float64(832.3), np.float64(520.15))",60.146
+d700_a30_synth_r5_synthdots.png,"(np.float64(826.6896551724138), np.float64(531.7931034482758))","(np.float64(826.6896551724138), np.float64(428.2068965517241))",60.069

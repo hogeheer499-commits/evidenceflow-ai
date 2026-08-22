@@ -1,0 +1,4 @@
+Python 3.12.3
+opencv-python-headless 5.0.0
+numpy 2.5.2
+Linux 7.0.0-28-generic
