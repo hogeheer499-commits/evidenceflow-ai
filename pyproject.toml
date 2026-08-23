@@ -38,6 +38,9 @@ testpaths = ["tests"]
 [tool.ruff]
 line-length = 88
 target-version = "py312"
+# Experiment scripts under demonstrators/ are kept exactly as they were run
+# (their hashes are recorded in each manifest.sha256), so they are not linted.
+extend-exclude = ["demonstrators"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP", "SIM"]
