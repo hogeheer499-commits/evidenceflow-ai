@@ -237,8 +237,8 @@ Folder: [`demonstrators/vision-lora-car-damage/`](demonstrators/vision-lora-car-
   when it answers 90% of photos, 87% at 70%, 93% at 50%. The photos it
   skips are genuinely harder (41–62% right). Its confidence also became
   more honest after fine-tuning (calibration error 0.095 → 0.049). This is
-  the image version of the "abstain and escalate" rule the workflow above
-  is built on.
+  the image version of the workflow's rule above: refuse rather than guess,
+  and hand the doubtful cases to a person.
 - **What this does not show.** Results on any other kind of photo,
   production readiness, or a guaranteed confidence. One training run, one
   seed. Car damage was chosen because it is public and labelled, not
