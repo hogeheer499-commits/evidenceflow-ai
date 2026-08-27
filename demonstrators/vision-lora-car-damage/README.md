@@ -166,6 +166,7 @@ Full confusion matrices are in `report.md`.
   container digest, base-model and dataset revisions and hashes.
 - `scripts/download_throttled.sh` - the rate-limited, hash-verified
   base-model download used for this run.
+- `dataset-card.md` - verbatim copy of the upstream dataset card (MIT).
 - `manifest.sha256` - SHA-256 of every committed file.
 
 ## Exact commands
@@ -191,3 +192,13 @@ instruments; the model is small; there is one training run and no
 hyper-parameter search; the validation split was not used. Domain
 transfer to real repair imagery, label quality, and calibrated abstention
 thresholds are open questions that this run does not answer.
+
+## Note on commit granularity
+
+In this repository the pre-registration section and the results sit in a
+single commit, because the experiment was imported here in consolidated
+form. The section order above (criteria first, results appended below,
+criteria unchanged) reflects how the work was done. For future
+experiments in this repository, the acceptance criteria will be committed
+separately and earlier than the results, so the ordering is verifiable
+from the git history alone.
