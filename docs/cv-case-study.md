@@ -13,13 +13,13 @@ synthetic and that the project is not yet a production government deployment.
 
 ## Roles this demonstrates
 
-- AI platform or LLM systems engineer;
-- applied AI engineer for regulated environments;
-- AI security / product security engineer;
+- backend / systems software engineer (Python, concurrency, durable state);
+- platform or infrastructure engineer for regulated environments;
+- security engineer (untrusted input handling, sandboxing, supply chain);
 - developer-platform or MLOps engineer;
-- solutions architect for private AI.
+- software architect for on-premises systems.
 
-The project is useful because it demonstrates engineering around the model:
+The project is useful because it demonstrates the software engineering around the model:
 scope enforcement, untrusted-input handling, deterministic validation,
 idempotency, auditability, evaluation and product trade-offs. A large local
 model by itself is not the portfolio differentiator.
